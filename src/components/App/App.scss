@@ -53,6 +53,41 @@ hr {
  * https://github.com/h5bp/html5-boilerplate/issues/440
  */
 
+.log {
+  overflow: hidden;
+}
+
+.card-wrapper {
+  padding: 10px;
+  width: 50%;
+  display: block;
+  box-sizing: border-box;
+}
+
+.card {
+  box-shadow: 0 0 4px rgba(0,0,0,.14),0 4px 8px rgba(0,0,0,.28);
+  background-color: white;
+  padding: 10px;
+}
+
+.container {
+}
+
+@media all and (max-width: 800px) {
+  .card-wrapper
+  {
+    width: 100%;
+  }
+}
+.mapwrapper {
+  height: 400px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
 audio,
 canvas,
 iframe,

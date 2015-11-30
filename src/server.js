@@ -2,45 +2,34 @@
 
 import 'babel-core/polyfill';
 import path from 'path';
-import express from 'express';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import Router from './routes';
 import Html from './components/Html';
+import locationService from './services/locationService';
+import feathers from 'feathers';
 
-const server = global.server = express();
+const app = feathers();
+
 const port = process.env.PORT || 5000;
-server.set('port', port);
 
-//
-// Register Node.js middleware
-// -----------------------------------------------------------------------------
-server.use(express.static(path.join(__dirname, 'public')));
+app.configure(feathers.rest());
+app.configure(feathers.primus({
+  transformer: 'sockjs',
+  pathname: '/primus',
+}));
 
-//
-// Register API middleware
-// -----------------------------------------------------------------------------
-server.use('/api/content', require('./api/content'));
+app.use('/', feathers.static(path.join(__dirname, 'public')));
+
+app.use('/location', locationService);
+
 
 //
 // Register server-side rendering middleware
 // -----------------------------------------------------------------------------
-server.get('*', async (req, res, next) => {
+app.get('*', async (req, res, next) => {
   try {
-    let statusCode = 200;
+    const statusCode = 200;
     const data = { title: '', description: '', css: '', body: '' };
-    const css = [];
-    const context = {
-      onInsertCss: value => css.push(value),
-      onSetTitle: value => data.title = value,
-      onSetMeta: (key, value) => data[key] = value,
-      onPageNotFound: () => statusCode = 404,
-    };
-
-    await Router.dispatch({ path: req.path, context }, (state, component) => {
-      data.body = ReactDOM.renderToString(component);
-      data.css = css.join('');
-    });
 
     const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
     res.status(statusCode).send('<!doctype html>\n' + html);
@@ -52,7 +41,7 @@ server.get('*', async (req, res, next) => {
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-server.listen(port, () => {
+app.listen(port, () => {
   /* eslint-disable no-console */
   console.log(`The server is running at http://localhost:${port}/`);
 });

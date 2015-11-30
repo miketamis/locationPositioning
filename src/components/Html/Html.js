@@ -34,13 +34,15 @@ class Html extends Component {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <title>{this.props.title}</title>
+        <title>{this.props.title.length ? this.props.title : 'FishTale'}</title>
         <meta name="description" content={this.props.description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="apple-touch-icon" href="apple-touch-icon.png" />
         <style id="css" dangerouslySetInnerHTML={{__html: this.props.css}} />
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css" type="text/css" />
       </head>
       <body>
+       <script src="https://maps.googleapis.com/maps/api/js"></script>
         <div id="app" dangerouslySetInnerHTML={{__html: this.props.body}} />
         <script src="/app.js"></script>
         <script dangerouslySetInnerHTML={this.trackingCode()} />
